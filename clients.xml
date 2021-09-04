@@ -1,0 +1,37 @@
+<openerp>
+    <data> 
+    	<record model="ir.ui.view" id="clients_vue_liste">
+        <field name="name">clients a relancer appels</field>
+        <field name="model">client_c</field>
+        <field name="arch" type="xml">
+    		<tree string="clients">
+				<field name="display_name"/>
+				<field name="function" invisible="1"/>
+				<field name="phone"/>
+				<field name="email"/>
+				<field name="id" invisible="1"/>
+				<field name="is_company" invisible="1"/>
+				<field name="country_id" invisible="1"/>
+				<field name="parent_id" invisible="1"/>
+			</tree>
+		</field>
+	</record>
+
+	<record model="ir.actions.act_window" id="clients_appels_action">
+    <field name="name">clients avec appels</field>
+    <field name="res_model">client_c</field>
+    <field name="view_type">tree</field>
+    <field name="view_mode">tree</field>
+	</record>
+
+<menuitem id="clients_menu" name="Clients à relancer  "
+                  parent="assistant_menu"
+                  />
+
+<menuitem id="clients_appels_menu" name="Clients qui ont des appels"
+                  parent="clients_menu"
+                  action="clients_appels_action"
+                  />
+            
+	</data>
+</openerp>

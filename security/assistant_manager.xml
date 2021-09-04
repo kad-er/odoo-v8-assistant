@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+		<record model="res.groups" id="articles_epuises_visible">
+			<field name="name">articles epuisés</field>
+		</record>
+		<record model="res.groups" id="articles_bientot_epuises_visible">
+			<field name="name">articles bientot epuisés</field>
+		</record>
+		<record model="res.groups" id="articles_visible">
+			<field name="name">articles</field>
+		</record>
+   	</data>
+</openerp>

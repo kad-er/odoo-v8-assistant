@@ -1,0 +1,191 @@
+<openerp>
+    <data>
+      <!-- heritage vue article -->
+      <record id="product_view_inherit" model="ir.ui.view">
+    <field name="name">heritage.vue.products</field>
+    <field name="model">product.template</field>
+    <field name="inherit_id" ref="product.product_template_only_form_view"/>
+    <field name="arch" type="xml">
+      <xpath expr="//field[@name='virtual_available']" position="after">
+          <field name="limite_stock" string="stock limite"/>
+        </xpath>
+    </field>
+</record>
+
+        <!--vue  list article-->
+ <record model="ir.ui.view" id="article_vue_liste">
+        <field name="name">article.vue.liste</field>
+        <field name="model">product.template</field>
+        <field name="arch" type="xml">
+            <tree string="Articles bientot non disponible" create="false" delete="false" editable="false" colors="orange:  (0 &lt; qty_available&lt;limite_stock);red:qty_available == 0;green: qty_available &gt;= limite_stock " >
+                 <field name="name"/>
+                 <field name="categ_id"/>
+                 <field name="type"/>
+                 <field name="state"/>
+                 <field name="qty_available"/>
+                 <field name="virtual_available"/>
+                 <field name="limite_stock"  />
+            </tree>
+        </field>
+    </record>
+
+
+
+
+
+
+
+        <!--vue  list Form-->
+
+<record model="ir.ui.view" id="article_vue_formulaire">
+            <field name="name">article.vue.form</field>
+            <field name="model">product.template</field>
+            <field name="arch" type="xml">
+                 <form string="Article" create="false" delete="false" edit="false" >
+                     <group colspan="4">
+                     <attribute name="name">Product Template</attribute>
+
+                       <field name="active" position="after">
+                        <field name="ean13" attrs="{'invisible': [('product_variant_count', '&gt;', 1)]}"/>
+                        <field name="default_code" attrs="{'invisible': [('product_variant_count', '&gt;', 1)]}"/>
+                        </field>
+
+                        <div class="oe_right">
+                            <button class="oe_inline oe_stat_button" string="Variant Prices" name="122" type="action" icon="fa-strikethrough"/>
+                            <button class="oe_inline oe_stat_button" name="124" type="action" icon="fa-sitemap">
+                                <field string="List of Variants" name="product_variant_count" widget="statinfo"/>
+                            </button>
+                        </div>
+                        <p class="oe_grey">
+                            <strong>Warning</strong>: adding or deleting attributes
+                            will delete and recreate existing variants and lead
+                            to the loss of their possible customizations.
+                        </p>
+                        <field name="attribute_line_ids" widget="one2many_list" context="{'show_attribute': False}">
+                            <tree string="Variants" editable="bottom">
+                                <field name="attribute_id"/>
+                                <field name="value_ids" widget="many2many_tags" options="{'no_create_edit': True}" domain="[('attribute_id', '=', attribute_id)]" context="{'default_attribute_id': attribute_id}"/>
+                            </tree>
+                        </field>
+
+                     </group>
+                </form>
+          </field>
+</record>
+   
+
+
+
+
+
+
+
+
+<!--action liste epuisé -->
+<record model="ir.actions.act_window" id="article_epuise_vue_liste_action">
+    <field name="name">Articles epuisés</field>
+    <field name="res_model">product.template</field>
+    <field name="view_type">form</field>
+    <field name="view_mode">tree,form</field>
+    <field name="domain">[
+        ('qty_available', '=', 0)
+    ]</field>
+</record>
+
+
+
+<!--action liste bientot epuisé -->
+<record model="ir.actions.act_window" id="article_bientot_epuise_vue_liste_action">
+    <field name="name">Articles bientot epuisés</field>
+    <field name="res_model">product.template</field>
+    <field name="view_type">form</field>
+    <field name="view_mode">tree,form</field>
+    <field name="domain">['&amp;',('qty_available','&lt;=', 'limite_stock'),('qty_available','&gt;', 0)
+    ]</field>
+</record>
+
+<!--action article en arrivage -->
+<record model="ir.actions.act_window" id="article_en_arrivage_action">
+    <field name="name">Articles en arrivage</field>
+    <field name="res_model">product.template</field>
+    <field name="view_type">form</field>
+    <field name="view_mode">tree,form</field>
+    <field name="domain">[('virtual_available','&gt;',0)]</field>
+</record>
+
+<!--action articles  -->
+
+                  <record model="ir.actions.act_window" id="article_vue_liste_action">
+    <field name="name">Tout les articles</field>
+    <field name="res_model">product.template</field>
+    <field name="view_type">form</field>
+    <field name="view_mode">tree,form</field>
+    
+</record>
+
+  <!--menu assistant -->
+<menuitem id="assistant_menu" name="Assistant" />
+
+
+
+<!--menu articles 'top'  -->
+                  <menuitem id="articles_menu" name="Articles "
+                  parent="assistant_menu"
+                  />
+
+
+<!--menu taches a faire 'top'  -->
+
+                   <menuitem id="taches_menu" name="Taches a faire "
+                  parent="assistant_menu"
+                  />
+
+<!--menu clients 'top'  -->
+
+                    <menuitem id="client_menu" name="clients a relancer"
+                  parent="assistant_menu"
+                  />
+
+
+<!--menu articles epuisés -->
+                  <menuitem id="articles_epuise_menu" name="Articles epuises"
+                  parent="articles_menu"
+                  action="article_epuise_vue_liste_action"
+                  />
+
+
+
+
+
+<!--menu articles bientot epuisés -->
+
+<menuitem id="articles_bientot_epuise_menu" name="Articles bientot epuises"
+                  parent="articles_menu"
+                  action="article_bientot_epuise_vue_liste_action"
+                  sequence="2"
+                  />
+
+
+<!--menu articles arrivage -->
+
+<menuitem id="articles_arrivage_menu" name="Articles en arrivage"
+                  parent="articles_menu"
+                  action="article_en_arrivage_action"
+                  sequence="4"
+                  />
+
+
+<!--menu articles  -->
+
+<menuitem id="articles_general_menu" name="Tout les articles"
+                  parent="articles_menu"
+                  action="article_vue_liste_action"
+                  sequence="1"
+                  
+                  />
+                  <!--
+groups="articles_epuises_visible"
+groups="articles_bientot_epuises_visible"
+groups="articles_visible"-->
+    </data>
+</openerp>

@@ -1,0 +1,321 @@
+<openerp>
+    <data>
+                              <!-- calendar appels et rdv -->
+<record id="appeletrdv_calendar" model="ir.ui.view">
+        <field name="name">Appels et RDV</field>
+        <field name="model">appel_rdv</field>
+        <field name="type">calendar</field>
+        <field name="arch" type="xml">
+            <calendar string="Appels et RDV" color="user_id" date_start="date">
+                <field name="name"/>
+                <field name="user_id"/>
+            </calendar>
+        </field>
+    </record>
+
+
+
+
+                              <!-- appels -->
+
+<record model="ir.ui.view" id="appels_vue_liste">
+        <field name="name">Appels.planifie</field>
+        <field name="model">crm.phonecall</field>
+        <field name="arch" type="xml">
+<tree string="Phone Calls" >
+                <field name="date"/>
+                <field name="name"/>
+                <field name="partner_id" on_change="on_change_partner_id(partner_id)"/>
+                <field name="partner_phone" invisible="1"/>
+                <field name="partner_mobile" invisible="1"/>
+                <field name="user_id" context="{'default_groups_ref': ['base.group_user', 'base.group_partner_manager', 'base.group_sale_salesman_all_leads']}"/>
+                <field name="categ_id" widget="selection" domain="[('object_id.model', '=', 'crm.phonecall')]" invisible="1"/>
+                <field name="state" invisible="1"/>
+                <field name="create_date" invisible="1"/>
+                <field name="opportunity_id" invisible="1" on_change="on_change_opportunity(opportunity_id)"/>
+                <button string="Schedule Other Call" icon="terp-call-start" name="303" type="action"/>
+                <button string="Meeting" icon="gtk-redo" name="action_make_meeting" type="object"/>
+                <button string="Convert to Opportunity" name="action_button_convert2opportunity" states="open,pending" icon="gtk-index" type="object" attrs="{'invisible':[('opportunity_id','!=',False)]}"/>
+            </tree>
+        
+  </field>
+    </record>
+
+<record model="ir.ui.view" id="appels_calendar_view">
+            <field name="name">Appels.planifie</field>
+            <field name="model">crm.phonecall</field>
+            <field name="arch" type="xml">
+                <calendar string="Appels planifie" date_start="date"
+                          date_stop="date_end"
+                          color="user_id">
+                    <field name="name"/>
+                </calendar>
+            </field>
+        </record>
+<record model="ir.ui.view" id="article_vue_form">
+        <field name="name">Appels.planifie</field>
+        <field name="model">crm.phonecall</field>
+        <field name="arch" type="xml">
+<form string="Phone Call">
+                <header>
+                    <field name="state" nolabel="1" widget="statusbar" clickable="True"/>
+                </header>
+                <sheet string="Phone Call">
+                    <div class="oe_right oe_button_box">
+                        <button class="oe_inline oe_stat_button" type="object" name="action_button_convert2opportunity" icon="fa-star" attrs="{'invisible':[ '|', ('opportunity_id','!=',False), ('state', 'not in', ('open', 'done'))]}" help="Convert To Opportunity">
+                            <div>Convert To<br/>Opportunity</div>
+                        </button>
+
+                        <button class="oe_inline oe_stat_button" type="action" name="303" icon="fa-phone">
+                            <div>Schedule<br/>Other Call</div>
+                        </button>
+                        <button class="oe_inline oe_stat_button" name="action_make_meeting" type="object" icon="fa-calendar fa-fw">
+                            <div>Schedule<br/>A Meeting</div>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <div class="oe_edit_only">
+                            <label for="name"/>
+                        </div>
+                        <h1><field name="name" required="1"/></h1>
+                        <div class="oe_edit_only">
+                            <label for="partner_phone" string="Phone"/>
+                        </div>
+                        <h2><field name="partner_phone"/></h2>
+                    </div>
+
+                    <group col="4">
+                        <field name="date"/>
+                        <field name="user_id" context="{'default_groups_ref': ['base.group_user', 'base.group_partner_manager', 'base.group_sale_salesman_all_leads']}"/>
+                        <label for="duration"/>
+                        <div>
+                          <field name="duration" widget="float_time" class="oe_inline" style="vertical-align:baseline"/> <b> min(s)</b>
+                        </div>
+                        <field name="section_id" colspan="1" widget="selection" groups="base.group_multi_salesteams"/>
+                        <field name="partner_id" on_change="on_change_partner_id(partner_id)"/>
+                        <field name="categ_id" widget="selection" domain="[('object_id.model', '=', 'crm.phonecall')]"/>
+                        <field name="partner_mobile"/>
+                        <field name="priority" widget="priority"/>
+                        <field name="opportunity_id" on_change="on_change_opportunity(opportunity_id)" context="{'opportunity_id': opportunity_id}"/>
+                    </group>
+                    <field name="description" placeholder="Description..."/>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        
+</field>
+    </record>
+
+                                              <!-- rdv -->
+
+
+
+<record model="ir.ui.view" id="rdv_vue_liste">
+        <field name="name">rdv.planifie</field>
+        <field name="model">calendar.event</field>
+        <field name="arch" type="xml">
+        <tree string="Meetings" fonts="bold:message_unread==True">
+                <field name="name" string="Subject"/>
+                <field name="allday" invisible="True"/>
+                <field name="start_date" string="Date"/>
+                <field name="start_datetime" string="Date"/>
+                <field name="user_id"/>
+                <field name="location"/>
+                <field name="show_as"/>
+                <field name="class" string="Privacy"/>
+                <field name="state" invisible="True"/>
+                <field name="duration"/>
+                <field name="message_unread" invisible="1"/>
+            </tree>
+        </field>
+</record>
+        
+
+
+
+
+<record model="ir.ui.view" id="rdv_vue_form">
+        <field name="name">rdv.planifie</field>
+        <field name="model">calendar.event</field>
+        <field name="arch" type="xml">
+        <form string="Meetings">
+                <sheet>
+                    <field name="state" invisible="1"/>
+                    <field name="is_attendee" invisible="1"/>
+                    <field name="attendee_status" invisible="1"/>
+                    <div class="oe_title">
+                        <div class="oe_edit_only">
+                            <label for="name"/>
+                        </div>
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                        <label for="partner_ids" string="Attendees" class="oe_edit_only"/>
+                        <h2>
+                            <field name="partner_ids" widget="many2manyattendee" context="{'force_email':True}" on_change="onchange_partner_ids(partner_ids)" class="oe_inline"/>
+                        </h2>
+                    </div>
+                    <notebook>
+                        <page string="Meeting Details">
+                            <group attrs="{'invisible': [('recurrency','==',False)]}" class="oe_edit_only ">
+                                <p class="alert alert-warning"> This event is linked to a recurrence...<br/>
+                                    <button type="object" name="open_after_detach_event" string="Update only this instance" help="Click here to update only this instance and not all recurrences. " class="oe_link"/>
+                                </p>
+                            </group>
+                            <group>
+                                <group>
+                                    <field name="start" attrs="{'invisible': True}"/>
+                                    <field name="stop" attrs="{'invisible': True}"/>
+
+                                    <field name="start_date" string="Starting at" on_change="onchange_dates('start', start_date, stop_date, allday, True)" attrs="{'invisible': [('allday','=',False)]}"/>
+                                    <field name="stop_date" string="Ending at" on_change="onchange_dates('stop', start_date, stop_date, allday, True)" attrs="{'invisible': [('allday','=',False)]}"/>
+
+                                    <field name="start_datetime" string="Starting at" on_change="onchange_dates('start', start_datetime, stop_datetime, allday, False)" attrs="{'invisible': [('allday','=',True)]}"/>
+                                    <field name="stop_datetime" string="Ending at" on_change="onchange_dates('stop', start_datetime, stop_datetime, allday, False)" attrs="{'invisible': [('allday','=',True)]}"/>
+                                    <label for="allday"/>
+                                    <div>
+                                        <field name="allday" class="oe_inline" on_change="onchange_allday(start, stop, start_date, stop_date, start_datetime, stop_datetime, allday)"/>
+                                    </div>
+                                    <field name="duration" widget="float_time" class="oe_inline" attrs="{ 'invisible': True }"/>
+                                </group>
+                                <group>
+                                    <field name="categ_ids" widget="many2many_tags"/>
+                                    <field name="alarm_ids" widget="many2many_tags"/>
+                                    <field name="location"/>
+                                </group>
+
+                            </group>
+                            <label for="description"/>
+                            <field name="description"/>
+                        </page>
+                        <page string="Options">
+                            <group>
+                                <group col="1">
+                                    <group>
+                                        <field name="recurrency"/>
+                                    </group>
+                                    <group attrs="{'invisible': [('recurrency','=',False)]}">
+                                        <label for="interval"/>
+                                        <div>
+                                            <field name="interval" attrs="{'required': [('recurrency','==',True)]}" class="oe_inline"/>
+                                            <field name="rrule_type" attrs="{'required': [('recurrency','==',True)]}" class="oe_inline"/>
+                                        </div>
+                                        <label string="Until" for="end_type"/>
+                                        <div>
+                                            <field name="end_type" attrs="{'required': [('recurrency','==',True)]}" class="oe_inline"/>
+                                            <field name="count" attrs="{'invisible': [('end_type', '!=', 'count')], 'required': [('recurrency','==',True)]}" class="oe_inline"/>
+                                            <field name="final_date" attrs="{'invisible': [('end_type', '!=', 'end_date')], 'required': [('end_type', '=', 'end_date')]}" class="oe_inline"/>
+                                        </div>
+                                        <label string="Select Weekdays" attrs="{'invisible' :[('rrule_type','not in', ['weekly'])]}"/>
+                                        <group col="2" colspan="1" name="weekdays" attrs="{'invisible' :[('rrule_type','not in', ['weekly'])]}">
+                                            <field name="mo"/>
+                                            <field name="tu"/>
+                                            <field name="we"/>
+                                            <field name="th"/>
+                                            <field name="fr"/>
+                                            <field name="sa"/>
+                                            <field name="su"/>
+                                        </group>
+    
+                                        <label string="Day of Month" attrs="{'invisible': [('rrule_type','!=','monthly')]}"/>
+    
+                                        <div attrs="{'invisible': [('rrule_type','!=','monthly')]}">
+                                            <field name="month_by"/>
+                                            <field name="day" attrs="{'required': [('month_by','=','date'), ('rrule_type','=','monthly')],                                                     'invisible': [('month_by','=','day')]}"/>
+                                            <field name="byday" string="The" attrs="{'required': [('month_by','=','day'), ('rrule_type','=','monthly')], 'invisible': [('month_by','=','date')]}"/>
+                                            <field name="week_list" nolabel="1" attrs="{'required': [('month_by','=','day'), ('rrule_type','=','monthly')], 'invisible': [('month_by','=','date')]}"/>
+                                        </div>
+                                    </group>
+                                </group>
+                                <group>
+                                    <field name="class"/>
+                                    <field name="show_as"/>
+                                    <field name="rrule" invisible="1" readonly="0"/>                                    
+                                    <field name="recurrent_id" invisible="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Invitations" groups="base.group_no_one">
+                            <button name="do_sendmail" type="object" string="Send mail" icon="terp-mail-message-new" class="oe_link"/>
+                            <field name="attendee_ids" widget="one2many">
+                                <tree string="Invitation details" editable="top" create="false" delete="false">
+                                    <field name="partner_id"/>
+                                    <field name="state"/>
+                                    <field name="email" widget="email"/>
+                                     
+                                    <button name="do_tentative" states="needsAction,declined,accepted" string="Uncertain" type="object" icon="terp-crm"/>
+                                    <button name="do_accept" string="Accept" states="needsAction,tentative,declined" type="object" icon="gtk-apply"/>
+                                    <button name="do_decline" string="Decline" states="needsAction,tentative,accepted" type="object" icon="gtk-cancel"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Misc" groups="base.group_no_one">
+                            <label string="Owner"/>
+                            <field name="user_id"/>
+                            
+                        </page>
+
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+    </field>
+</record>
+
+
+<!-- actions -->
+        <record model="ir.actions.act_window" id="taches_action">
+    <field name="name">Taches a faire</field>
+    <field name="res_model">appel_rdv</field>
+    <field name="view_type">form</field>
+    <field name="view_mode">calendar</field>
+        </record>
+
+
+         <record model="ir.actions.act_window" id="appels_planifie_action">
+    <field name="name">appels planifies</field>
+    <field name="res_model">crm.phonecall</field>
+    <field name="view_type">form</field>
+    <field name="view_mode">calendar,tree,form</field>
+         </record>
+
+
+         <record model="ir.actions.act_window" id="rdv_action">
+    <field name="name">rdv planifie</field>
+    <field name="res_model">calendar.event</field>
+    <field name="view_type">form</field>
+    <field name="view_mode">calendar,tree,form</field>
+     <field name="domain">[('categ_ids','=', 1)]</field>   
+         </record>
+<!--menu rdv,appels  -->
+
+<menuitem id="rdv_appels_menu" name="Appels et rdv"
+                  parent="taches_menu"
+                  action="taches_action"
+                  sequence="1"
+                  
+                  />
+
+<menuitem id="appels_menu" name="Appels"
+                  parent="taches_menu"
+                  action="appels_planifie_action"
+                  sequence="2"
+                  
+                  />
+
+<menuitem id="rdv_menu" name="Randez-vous"
+                  parent="taches_menu"
+                  action="rdv_action"
+                  sequence="3"
+                  
+                  />
+
+    </data>
+</openerp>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	    <data>
+	    				<record id="assistant_notif_template" model="email.template">
+	    					<field name="name">push notif assistant template</field>
+	    					<field name="tmpl_id">990</field>
+	    					<field name="model_id">316</field>
+	    					<field name="subject">rappel : ${object.name}</field>
+	    					<field name="body_html">rappel appeler ${object.partner_id and obect.partner_id.name or 'user'}</field>
+	    					<field name="email_from">no-reply@exemple.com</field>
+	    					<field name="email_to">${object.user_id and object.user_id.email}</field>
+	    				</record>
+	    				<record id="assistant_notif_action" model="ir.actions.server">
+	    					<field name="name">push notif assistant action</field>
+	    					<field name="model_id">316</field>
+	    					<field name="state">code</field>
+	    					<field name="code"># Available locals:
+#  - time, datetime, dateutil: Python libraries
+#  - env: Odoo Environement
+#  - model: Model of the record on which the action is triggered
+#  - object: Record on which the action is triggered if there is one, otherwise None
+#  - workflow: Workflow engine
+#  - Warning: Warning Exception to use with raise
+# To return an action, assign: action = {...}
+tmpl_obj=self.pool.get('email.template')
+tmpl_ids=tmpl_obj.search(cr.uid,[('name','=','push notif assistant template')])
+if tmpl_ids:
+	self.pool.get('email.template').send_mail(cr,uid,tmpl_ids[0],object.id,True)</field>
+	    					
+	    				</record>
+	    				<record id="assistant_notif_mail" model="base.action.rule">
+	    					<field name="name">push notif assistant</field>
+	    					<field name="model_id">316</field>
+	    					<field name="kind">on_time</field>
+	    					<field name="trg_date_id">4498</field>
+	    					<field name="trg_date_range">-30</field>
+	    					<field name="trg_date_range_type">minutes</field>
+	    					<field name="server_action_ids" eval="[(4,445,'push notif assistant action')]"/>
+	    				</record>
+		</data>
+</openerp>
